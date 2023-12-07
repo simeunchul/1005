@@ -1,0 +1,292 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>통합 게시판</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/board/css/main.css" />
+</head>
+<style>
+
+</style>
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Header -->
+		<header id="header">
+			<h1>
+				<a href="/static">메인화면</a>
+			</h1>
+			<nav class="links">
+				<ul>
+					<li><a href="boardPage">전체</a></li>
+					<li><a href="#">소주</a></li>
+					<li><a href="#">맥주</a></li>
+					<li><a href="#">와인</a></li>
+					<li><a href="#">보드카</a></li>
+					<li><a href="#">위스키</a></li>
+					<li><a href="#">자유</a></li>
+					<li th:unless="${session.check}==null" id="showBoardUserName"><a href="/myInfoPage"><input type="hidden" th:text="${session.sessionVo.userId}"><input type="hidden" th:text="님"></a>
+				</ul>
+			</nav>
+			<nav class="main">
+				<ul>
+					<li class="search"><a class="fa-search" href="#search">Search</a>
+						<form id="search" method="get" action="#">
+							<input type="text" name="query" placeholder="Search" />
+						</form></li>
+					<li class="menu"><a class="fa-bars" href="#menu">Menu</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<!-- Menu -->
+		<section id="menu">
+
+			<!-- Search -->
+			<section>
+				<form class="search" method="get" action="#">
+					<input type="text" name="query" placeholder="Search" />
+				</form>
+			</section>
+
+			<!-- Links -->
+			<section>
+				<ul class="links">
+					<li><a href="myBoardPage">
+							<h3>내가 작성한 글</h3>
+							<p>작성한 글 보러가기</p>
+					</a></li>
+					<li><a href="#">
+							<h3>좋아요</h3>
+							<p>좋아요 누른 글 보러가기</p>
+					</a></li>
+					<li><a href="#">
+							<h3>댓글</h3>
+							<p>댓글 작성한 글 보러가기</p>
+					</a></li>
+				</ul>
+			</section>
+
+			<!-- Actions -->
+			<section>
+
+				<ul th:if="${session.check}==null" class="actions stacked">
+					<li><a href="/boardLoginPage" class="button large fit"
+						   onclick="boardGoLogin">로그인</a></li>
+				</ul>
+				<ul th:unless="${session.check}==null" class="actions stacked">
+					<li><a href="/boardLogout" class="button large fit">로그아웃</a></li>
+				</ul>
+
+			</section>
+
+		</section>
+
+		<!-- Main -->
+		<div id="main">
+			<!-- 클릭한 게시글 -->
+			<article class="post">
+				<header>
+					<div class="title">
+						<h2>
+							<a href="#" id=singleBoardTitleIg><input type="hidden" th:text="${showBoard.title}"></a>
+						</h2>
+					</div>
+					<div class="meta">
+						<time class="published" datetime="${showBoard.regdate}" id="editAfterBoard">등록 : <input type="hidden" th:text="${showBoard.regdate}"> </time>
+						<time th:unless="${showBoard.regdate}!=${showBoard.editdate}" class="published" datetime="${showBoard.regdate}">수정 : <input type="hidden" th:text="${showBoard.regdate}"></time>
+						<p href="#" class="author"><span class="name">작성자 :
+								<input type="hidden" th:text="${showBoard.writer}"></span></p>
+						<p href="#" class="author"><span class="name">조회수 :
+								<input type="hidden" th:text="${showBoard.clickCnt}"></span></p>
+					</div>
+				</header>
+				<p><input type="hidden" th:text="${showBoard.content}"></p>
+				<footer>
+					<ul class="stats">
+						<li><a href="#" class="icon solid fa-heart"><input type="hidden" th:text="${showBoard.likeBtn}"></a></li>
+						<!--<li><a class="icon solid fa-heart"
+												 id="boardclickHeart2"><input type="hidden" th:text="${showBoard.likeBtn}+1"></a></li>-->
+						<li><a href="#" class="icon solid fa-comment"><input type="hidden" th:text="0"></a></li>
+					</ul>
+				</footer>
+			</article>
+
+			<!-- Pagination -->
+			<ul class="actions pagination">
+				<li><a href="boardPage" class="button large next" id="showMyBoardBtn">목록</a></li>
+				<li><a href="myBoardPage" class="button large next"
+					id="showMyBoardBtn">내 글 보기</a></li>
+				<!-- 수정 삭제 -->
+					<li th:if="${showBoard.registNumber}==${session.sessionVo.registNumber}"><a th:href="@{changeBoard(editBoardBno=${showBoard.bno})}"
+						class="button large next" id="showMyBoardBtn">수정</a></li>
+					<li th:if="${showBoard.registNumber}==${session.sessionVo.registNumber}"><a th:href="@{deleteBoard(deleteBoardBno=${showBoard.bno})}" class="button large next" id="showMyBoardBtn"
+					onclick="return confirm('게시글을 삭제하겠습니까?');">삭제</a></li>
+				<li><a href="createBoard" class="button large previous" id="insertBtn3">글 작성</a></li>
+			</ul>
+
+			<!-- Post -->
+			<article class="post" id="secondMain">
+				<ul class="firstUlStyle">
+					<li id="boardSul">분류</li>
+					<li id="boardTitle">제목</li>
+					<li id="boardWriter">작성자</li>
+					<!-- 날짜 포맷 -->
+					<li id="boardRegdate">날짜</li>
+					<li id="boardClickCnt">조회수</li>
+					<li id="boardLikeBtn">추천</li>
+				</ul>
+					<ul style='<th:if="${alReg.bno}==${idx}">background-color : #d1ffee</th:if>' th:each="alReg : ${list}">
+						<li id="boardSul"><input type="hidden" th:text="${alReg.sul}"></li>
+						<li id="boardTitle"><a
+								th:href="@{singleBoardPage(idx=${alReg.bno})}"><input type="hidden" th:text="${alReg.title}"></a></li>
+						<li id="boardWriter"><input type="hidden" th:text="${alReg.writer}"></li>
+						<!-- 날짜 포맷 -->
+						<li id="boardRegdate">
+							<!--<fmt:parseDate value="${alReg.regdate}"
+								var="dateFmt" pattern="yyyy-MM-dd HH:mm:ss" /> <fmt:formatDate
+								value="${dateFmt}" var="yMd" pattern="yyyy.MM.dd" /> <fmt:formatDate
+								value="${dateFmt}" var="Hms" pattern="HH:mm" /> <!-- now는 맨위에서 현재날짜+시간 포맷한거, today는 오늘 날짜 -->
+							<!--<fmt:formatDate value="${now}" pattern="yyyy.MM.dd" var="today" />-->
+							<!-- if로 비교 -->
+							<input type="hidden" th:text="${alReg.regdate}">
+							</li>
+						<li id="boardClickCnt"><input type="hidden" th:text="${alReg.clickCnt}"></li>
+						<li id="boardLikeBtn"><a class="icon solid fa-heart"
+												 id="listclickheart0"><input type="hidden" th:text="${alReg.likeBtn}"></a></li>
+						<li id="boardLikeBtn1"><a class="icon solid fa-heart"
+												 id="listclickheart1"><input type="hidden" th:text="${alReg.likeBtn}+1"></a></li>
+					</ul>
+
+
+			</article>
+			<!--
+			<script>
+				$(function (){
+					$("#boardclickHeart2").hide();
+					$("#listclickheart1").hide();
+				});
+				function likeclick(){
+					$("#boardclickHeart1").hide();
+					$("#boardclickHeart2").show();
+					$("#listclickHeart0").hide();
+					$("#listclickHeart1").show();
+				}
+			</script>
+			-->
+
+
+			<ul class="pagination pagination-lg" >
+				<!-- li태그의 클래스에 disabled를 넣으면 마우스를 위에 올렸을 때 클릭 금지 마크가 나오고 클릭도 되지 않는다.-->
+				<!-- disabled의 의미는 앞의 페이지가 존재하지 않다는 뜻이다. -->
+				<li class="disabled">
+					<a href="#">
+						<span>«</span>
+					</a>
+				</li>
+				<!-- li태그의 클래스에 active를 넣으면 색이 반전되고 클릭도 되지 않는다. -->
+				<!-- active의 의미는 현재 페이지의 의미이다. -->
+				<li class="active" th:each="idx:${numbers}"><a th:href="'boardPage'+${idx}"><input type="hidden" th:text="${idx}"></a></li>
+				<li>
+					<a href="#">
+						<span>»</span>
+					</a>
+				</li>
+			</ul>
+
+			<!-- Pagination -->
+			<!--
+			<ul class="actions pagination">
+				<li><a href="myBoardPage" class="button large next"
+					id="showMyBoardBtn">내 글 보기</a></li>
+				<li><a href="createBoard" class="button large next" id="insertBtn4">글
+						작성</a></li>
+			</ul> -->
+
+		</div>
+
+		<!-- Sidebar -->
+		<section id="sidebar">
+			<!-- Intro -->
+			<section id="intro">
+				<header>
+					<h2>통합 커뮤니티</h2>
+				</header>
+			</section>
+			<!-- Posts List -->
+			<h3>
+				<a href="">인기 게시글</a>
+			</h3>
+			<section id="sidebarBody">
+				<ul th:each="alLike : ${allBoardLike}" class="posts">
+					<li>
+						<article>
+							<header>
+								<h3>
+
+									<a id="overFlowH3"
+									   th:href="@{singleBoardPage${pagingVo.makeQueryPage(alLike.bno, pagingVo.cri.page) }}"><input type="hidden" th:text="${alLike.title}"></a>
+								</h3>
+								<time class="published" id="sideBoardRegdate"><input type="hidden" th:text="${alLike.regdate}">
+									<a class="icon solid fa-heart" id="boardLike">
+										<input type="hidden" th:text="${alLike.likeBtn}"></a>
+								</time>
+
+							</header>
+						</article>
+					</li>
+				</ul>
+			</section>
+
+			<!-- About -->
+			<section class="blurb">
+				<h2>건의하기</h2>
+				<p>건의사항, 오류발견시 신고좀</p>
+				<ul class="actions">
+					<li><a href="#" class="button">ㄱㄱ</a></li>
+				</ul>
+			</section>
+
+			<!-- Footer -->
+			<section id="footer">
+				<ul class="icons">
+					<li><a href="#" class="icon brands fa-twitter"><span
+							class="label">Twitter</span></a></li>
+					<li><a href="#" class="icon brands fa-facebook-f"><span
+							class="label">Facebook</span></a></li>
+					<li><a href="#" class="icon brands fa-instagram"><span
+							class="label">Instagram</span></a></li>
+					<li><a href="#" class="icon solid fa-rss"><span
+							class="label">RSS</span></a></li>
+					<li><a href="#" class="icon solid fa-envelope"><span
+							class="label">Email</span></a></li>
+				</ul>
+				<p class="copyright">
+					&copy; Untitled. Design: <a href="http://html5up.net">HTML5 UP</a>.
+					Images: <a href="http://unsplash.com">Unsplash</a>.
+				</p>
+			</section>
+
+		</section>
+
+	</div>
+
+	<!-- Scripts -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="/board/js/browser.min.js"></script>
+	<script src="/board/js/breakpoints.min.js"></script>
+	<script src="/board/js/util.js"></script>
+	<script src="/board/js/main.js"></script>
+
+</body>
+</html>

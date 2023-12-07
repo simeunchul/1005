@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>아이디조회실패</title>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/login/css/index.css" />
+<style>
+</style>
+</head>
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Header -->
+		<header id="header">
+			<div id="registDivBorder">
+				<article id="login">
+					<h2 class="major">아이디조회결과</h2>
+					<form method="post" accept-charset="UTF-8">
+					<p id="tableFailHead">해당 정보로 조회되는 아이디가 없습니다</p>
+						<table>
+							<tr>
+								<td>이름</td>
+								<td><input type="hidden" name="userName" th:text="${inputName}"
+									readonly="readonly"></td>
+							</tr>
+							<tr>
+								<td>주민등록번호 앞자리</td>
+								<td><input type="hidden" name="userRn1" th:text="${inputRn1}"
+									readonly="readonly"></td>
+							</tr>
+						</table>
+					</form>
+				</article>
+			</div>
+		</header>
+		<!-- 여가 끝남 -->
+		<!-- Footer -->
+		<footer id="footer">
+			<a href="/">메인화면</a>
+		</footer>
+
+	</div>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<!-- Scripts -->
+	<script src="/login/js/browser.min.js"></script>
+	<script src="/login/js/breakpoints.min.js"></script>
+	<script src="/login/js/util.js"></script>
+	<script src="/login/js/main.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.mappers.SulMapper">
+
+	<select id="selectLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		order by likeBtn desc
+	</select>
+
+	<select id="selectBno" resultType="SulVo" parameterType="long">
+		select *
+		from sul
+		where bno = #{bno}
+	</select>
+	
+	<select id="findSameBno" resultType="String" parameterType="long">
+		select  ber from sul where
+		bno = #{bno}
+	</select>
+
+	<select id="countSul" resultType="int">
+		select count(*) from sul
+	</select>
+
+	<select id="selectLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+
+	<select id="selectByRegistNumber" resultType="int"
+		parameterType="long">
+		select count(*) from sul where registNumber = #{reg}
+	</select>
+
+	<select id="selectMyLikeBtnDesc" resultType="SulVo"
+		parameterType="UserVo">
+		select * from sul
+		where registNumber = #{registNumber}
+		order by
+		likeBtn desc
+	</select>
+
+	<select id="countMySul" resultType="int" parameterType="UserVo">
+		select
+		count(*) from sul
+		where registNumber = #{registNumber}
+	</select>
+
+	<select id="selectMyLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where registNumber = #{registNumber}
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+
+	<insert id="insertBoard" parameterType="SulVo">
+		insert into sul (sul,
+		writer, registNumber, menu, title, content) values
+		(#{sul}, #{writer},
+		#{registNumber}, #{menu}, #{title}, #{content})
+	</insert>
+
+	<update id="updateBoard" parameterType="SulVo">
+		UPDATE sul SET
+		title=#{title}, content=#{content},
+		sul=#{sul}, menu=#{menu}, editdate=current_timestamp() WHERE bno = #{bno}
+	</update>
+	
+	<update id="deleteBoard" parameterType="SulVo">
+		delete from sul WHERE bno = #{bno}
+	</update>
+	
+	
+	<select id="selectSojuLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		where sul = '소주'
+		order by likeBtn desc
+	</select>
+	
+	<select id="countSoju" resultType="int">
+		select count(*) from sul where sul = '소주'
+	</select>
+	
+	<select id="selectSojuLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where sul = '소주'
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+	
+	
+	<select id="selectBeerLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		where sul = '맥주'
+		order by likeBtn desc
+	</select>
+	
+	<select id="countBeer" resultType="int">
+		select count(*) from sul where sul = '맥주'
+	</select>
+	
+	<select id="selectBeerLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where sul = '맥주'
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+	
+	
+	<select id="selectWineLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		where sul = '와인'
+		order by likeBtn desc
+	</select>
+	
+	<select id="countWine" resultType="int">
+		select count(*) from sul where sul = '와인'
+	</select>
+	
+	<select id="selectWineLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where sul = '와인'
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+	
+	<select id="selectVodkaLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		where sul = '보드카'
+		order by likeBtn desc
+	</select>
+	
+	<select id="countVodka" resultType="int">
+		select count(*) from sul where sul = '보드카'
+	</select>
+	
+	<select id="selectVodkaLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where sul = '보드카'
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+	
+	<select id="selectWhiskeyLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		where sul = '위스키'
+		order by likeBtn desc
+	</select>
+	
+	<select id="countWhiskey" resultType="int">
+		select count(*) from sul where sul = '위스키'
+	</select>
+	
+	<select id="selectWhiskeyLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where sul = '위스키'
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+	
+	<select id="selectFreeLikeBtnDesc" resultType="SulVo"
+		parameterType="String">
+		select * from sul
+		where sul = '그외'
+		order by likeBtn desc
+	</select>
+	
+	<select id="countFree" resultType="int">
+		select count(*) from sul where sul = '그외'
+	</select>
+	
+	<select id="selectFreeLimit" resultType="SulVo"
+		parameterType="hashmap">
+		select * from sul
+		where sul = '그외'
+		order by bno desc
+		limit #{pageStart},
+		#{perPageNum}
+	</select>
+</mapper>

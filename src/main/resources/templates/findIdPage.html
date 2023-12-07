@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>아이디찾기</title>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/login/css/index.css" />
+<style>
+</style>
+</head>
+<body class="is-preload">
+
+	<!-- Wrapper -->
+	<div id="wrapper">
+
+		<!-- Header -->
+		<header id="header">
+			<div id="registDivBorder">
+				<article id="findId">
+				<h2 class="major">아이디찾기</h2>
+				<form method="post" action="/findId" name="findId"
+					onsubmit="return formCheckFindId(this)" accept-charset="UTF-8">
+					<div class="fields">
+						<div class="field half">
+							<label for="Name">이름입력</label> <input type="text" id="userName"
+								name="userName" required="required" placeholder="이름 입력"
+								maxlength="10">
+						</div>
+					</div>
+					<div class="fields">
+						<div class="field half">
+							<label for="Rn1">주민등록번호 앞자리</label> <input type="text" name="rn1"
+								id="rn1" placeholder="주민등록번호 앞자리" maxlength="6"
+								required="required"
+								onkeyup="moveNext(this,6,document.findId.rn2)">
+						</div>
+						<div class="field half">
+							<label for="Rn2">뒷자리</label> <input type="password" name="rn2"
+								id="rn2" placeholder="주민등록번호 뒷자리" maxlength="7"
+								required="required"
+								onkeyup="moveNext(this,7,document.findId.sendBtn)">
+						</div>
+					</div>
+					<div class="myFields" id="SRnDupWarningId">
+						<div class="myField">
+							<label class="myLabel" for="SRnLabelWarningId">RNRNRNRN</label>
+						</div>
+					</div>
+					<div class="btnFields">
+						<div class="field half">
+							<input type="submit" value="찾기" class="primary"
+							name="sentBtn" />
+						</div>
+					</div>
+				</form>
+			</article>
+			</div>
+		</header>
+		<!-- 여가 끝남 -->
+		<!-- Footer -->
+		<footer id="footer">
+			<a href="/">메인화면</a>
+		</footer>
+
+	</div>
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<!-- Scripts -->
+	<script src="/login/js/browser.min.js"></script>
+	<script src="/login/js/breakpoints.min.js"></script>
+	<script src="/login/js/util.js"></script>
+	<script src="/login/js/main.js"></script>
+
+</body>
+</html>

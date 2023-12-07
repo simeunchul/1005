@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>내정보</title>
+<meta charset="utf-8" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, user-scalable=no" />
+<link rel="stylesheet" href="/main/css/main.css" />
+<style>
+</style>
+</head>
+<body class="is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<div id="header">
+
+			<!-- Logo -->
+			<h1>
+				<a href="/" id="logo"><em>페이지 이름 정해라</em></a>
+			</h1>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul>
+					<li><a href="/">메인화면</a></li>
+					<li><a href="#">술</a>
+						<ul>
+							<li><a href="#">소주</a></li>
+							<li><a href="#">맥주</a></li>
+							<li><a href="#">와인</a></li>
+							<li><a href="#">보드카</a></li>
+							<li><a href="#">위스키</a></li>
+						</ul></li>
+					<li><a href="#">랜덤채팅</a></li>
+					<li><a href="#">게시판</a>
+						<ul>
+							<li><a href="#">소주게시판</a></li>
+							<li><a href="#">맥주게시판</a></li>
+							<li><a href="#">와인게시판</a></li>
+							<li><a href="#">보드카게시판</a></li>
+							<li><a href="#">위스키게시판</a></li>
+						</ul></li>
+					<li class="current"><a href="/myInfoPage"><input type="hidden" th:text="${session.sessionVo.userId}"><input type="hidden" th:text="님"></a></li>
+				</ul>
+			</nav>
+
+		</div>
+
+		<!-- Main -->
+		<section class="wrapper style1">
+			<div class="container">
+				<div id="content">
+					<!-- Content -->
+					<article id="delete">
+						<h2 class="major">회원탈퇴</h2>
+						<form>
+							<div class="btnFields">
+								<div class="field half">
+									<input type="hidden" id="sessionid" th:value="${session.sessionVo.userId}">
+									<button type="button" class="primary"
+										onclick="deletemember()">회원탈퇴</button>
+									<button type="button" class="primary"
+										onclick="location.href='/myInfoPage'">취소</button>
+								</div>
+							</div>
+						</form>
+					</article>
+
+				</div>
+			</div>
+		</section>
+		<script>
+			function deletemember(){
+				let sessionId = $("#sessionid").val();
+				$.ajax({
+					url : "deleteInfo",
+					type : "post",
+					dataType : 'json',
+					data: {
+						sessionId : sessionId
+					},
+					success: function (result){
+						alert("회원 탈퇴되었습니다.")
+						window.location.href="/"
+					},
+					error : function (){
+						alert("서버요청실패")
+					}
+				})
+			}
+		</script>
+
+		<!-- Footer -->
+		<div id="footer">
+			<!-- Copyright -->
+			<div class="copyright">
+				<p class="copyright">&copy; Design: 서덕영</p>
+			</div>
+		</div>
+
+	</div>
+	<!-- Scripts -->
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="/main/js/jquery.dropotron.min.js"></script>
+	<script src="/main/js/browser.min.js"></script>
+	<script src="/main/js/breakpoints.min.js"></script>
+	<script src="/main/js/util.js"></script>
+	<script src="/main/js/main.js"></script>
+
+</body>
+</html>

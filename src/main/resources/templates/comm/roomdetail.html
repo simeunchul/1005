@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Title</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/dist/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/77ad8525ff.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/main/css/main.css" />
+    <style>
+        /*[v-cloak]{
+            display: none;
+        }*/
+        .container.icon{
+            position: relative;
+            overflow: hidden;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #eee;
+        }
+        .container.icon i{
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            font-size: 2.5rem;
+            color: #aaa;
+            transform: translateX(-50%);
+        }
+        .container.textbox{
+            position: relative;
+            display: inline-block;
+            max-width: calc(100% - 70px);
+            padding: 10px;
+            margin-top: 7px;
+            font-size: 8px;
+            border-radius: 10px;
+            z-index: -1;
+        }
+        .container.textbox::before{
+            position: relative;
+            display: block;
+            top: 0;
+            font-size: 1.5rem;
+        }
+        .container{
+            position: fixed;
+            bottom : 0;
+            width: 50%;
+            left: 224px;
+            z-index: -1;
+        }
+        #header{
+            position: fixed;
+            top : 0;
+            width: 100%;
+            background-image: url("/images/흰색배경.png");
+            z-index: 1;
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+<!--<div id="header">
+    <h2><a href="/" style="text-decoration: none">술꾼도시사람들</a></h2>
+</div> -->
+<!-- Nav -->
+<nav id="nav" style="z-index: 2">
+    <ul style="text-align: right">
+        <li style="float: left"><a href="/">술꾼도시사람들</a></li>
+        <li class="current"><a href="/choiceSulPage">안주 추천</a></li>
+        <li><a href="/boardPage">게시판</a>
+            <ul>
+                <li><a href="/sojuBoardPage">소주게시판</a></li>
+                <li><a href="/beerBoardPage">맥주게시판</a></li>
+                <li><a href="/wineBoardPage">와인게시판</a></li>
+                <li><a href="/vodkaBoardPage">보드카게시판</a></li>
+                <li><a href="/whiskeyBoardPage">위스키게시판</a></li>
+            </ul></li>
+
+
+        <li th:if="${session.check}==null"><a href="/loginPage">로그인</a>
+            <ul>
+                <li><a href="/findIdPage">아이디찾기</a></li>
+                <li><a href="/findPwPage">비밀번호찾기</a></li>
+                <li><a href="/registPage">회원가입</a></li>
+            </ul></li>
+
+        <li th:unless="${session.check}==null"><a href="/myInfoPage"><input type="hidden" th:text="${session.sessionVo.userId}"><input type="hidden" th:text="님"></a>
+            <ul>
+                <li><a class="loginATag" href="/logout">로그아웃</a></li>
+                <li><a class="loginATag" href="/myInfoEdit">비밀번호변경</a></li>
+                <li><a class="loginATag" href="/deleteInfoPage">회원탈퇴</a></li>
+            </ul></li>
+
+    </ul>
+</nav>
+<div class="container" id="app" v-cloak>
+
+    <ul class="list-group">
+    <li style="text-align: left" class="list-group-item" v-for="message in messages">
+        <div class="icon"><i class="fa-solid fa-user"></i></div>
+        <div class="textbox"> {{message.sender}} - {{message.message}}</div>
+    </li>
+    </ul>
+    <div class="input-group">
+        <div class="input-group-prepend">
+            <label class="input-group-text">내용</label>
+        </div>
+        <input type="text" class="form-control" v-model="message" @keyup.enter="sendMessage">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="button" @click="sendMessage">보내기</button>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div id="footer">
+
+        <!-- Copyright -->
+        <div class="copyright">
+            <p class="copyright">&copy; Design: 서덕영</p>
+        </div>
+
+    </div>
+
+</div>
+<script src="/webjars/vue/2.5.16/dist/vue.min.js"></script>
+<script src="/webjars/axios/0.17.1/dist/axios.min.js"></script>
+<script src="/webjars/bootstrap/4.3.1/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+<script src="/webjars/stomp-websocket/2.3.3-1/stomp.min.js"></script>
+<script>
+    //websocket & stomp initialize
+    /*var sock = new SockJS("/ws-stomp");
+    var ws = Stomp.over(sock);
+    var reconnect = 0;
+    // vue.js
+    var vm = new Vue({
+        el: '#app',
+        data:{
+            roomId :'',
+            room : {},
+            sender: '',
+            message : '',
+            messages : []
+        },
+        created(){
+            this.roomId = localStorage.getItem('wschat.roomId');
+            this.sender = localStorage.getItem('wschat.sender');
+            console.log(localStorage.getItem('wschat.roomId'));
+            console.log(localStorage.getItem('wschat.sender'));
+            this.findRoom();
+        },
+        methods:{
+            findRoom : function (){
+                axios.get('/comm/room/'+this.roomId).then(response =>{this.room = response.data;});
+            },
+            sendMessage : function () {
+                ws.send("/pub/comm/message", {}, JSON.stringify({
+                    type: 'COMM',
+                    roomId: this.roomId,
+                    sender: this.sender,
+                    message: this.message
+                }));
+            },
+            recvMessage: function (recv){
+                this.messages.unshift({"type":recv.type,"sender":recv.type==='ENTER'?'[알림]':recv.sender, "message":recv.message})
+
+            }
+        }
+    });
+    function connect(){
+        // pub/sub event
+        ws.connect({},function (frame){
+            ws.subscribe("/sub/comm/room"+vm.$data.roomId,function (message){
+                var recv = JSON.parse(message.body);
+                vm.recvMessage(recv);
+            });
+            ws.send("/pub/comm/message",{},JSON.stringify({type:'ENTER',roomId:vm.$data.roomId,sender:vm.$data.sender}));
+        }, function (error){
+                alert("error" +error);
+        });
+    }
+    connect();*/
+    var sock = new SockJS("/ws-stomp");
+    var ws = Stomp.over(sock);
+    // vue.js
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            roomId: '',
+            room: {},
+            sender: '',
+            message: '',
+            gender : '',
+            messages: []
+        },
+        created() {
+            this.roomId = localStorage.getItem('wschat.roomId');
+            this.sender = localStorage.getItem('wschat.sender');
+            this.gender = localStorage.getItem('wschat.gender');
+            this.realroomId = localStorage.getItem('wschat.realroomId');
+            this.findRoom();
+        },
+        methods: {
+            findRoom: function() {
+                axios.get('/comm/room/'+this.roomId).then(response => { this.room = response.data; });
+            },
+            sendMessage: function() {
+                ws.send("/pub/comm/message", {}, JSON.stringify({messageType:'COMM', roomId:this.roomId, sender:this.sender, message:this.message}));
+                this.message = '';
+            },
+            recvMessage: function(recv) {
+                this.messages.push({"messageType":recv.messageType,"sender":recv.messageType=='ENTER'?'[알림]':recv.sender,"message":recv.message})
+            },
+            disconnectMessage : function (recv){
+                this.messages.push({"messageType":recv.messageType,"sender":recv.messageType=='OUT'?'[알림]':recv.sender,"message":recv.message})
+            }
+        }
+    });
+    // pub/sub event
+    ws.connect({}, function(frame) {
+        ws.subscribe("/sub/comm/room/"+vm.$data.roomId, function(message) {
+            var recv = JSON.parse(message.body);
+            vm.recvMessage(recv);
+            //var recv2 = JSON.parse(message.body);
+            //vm.disconnectMessage(recv2);
+        });
+        console.log(vm.$data.gender);
+        var gendercheck1 = vm.$data.roomId.substring(3,4);
+        console.log(gendercheck1);
+        var gendercheck2 = vm.$data.roomId.substring(4,5);
+        console.log(gendercheck2);
+        if(vm.$data.gender===gendercheck1||vm.$data.gender===gendercheck2){
+            ws.send("/pub/comm/message", {}, JSON.stringify({messageType:'COMM', roomId:vm.$data.roomId, sender:'[알림]', message:"상대를 찾고 있습니다."}));
+        }
+        else{
+            ws.send("/pub/comm/message", {}, JSON.stringify({messageType:'COMM', roomId:vm.$data.roomId, sender:'[알림]', message:"매치성공!"}));
+        }
+        //ws.send("/pub/comm/message",{},JSON.stringify({messageType:'OUT', roomId:vm.$data.roomId, sender:vm.$data.sender}));
+        ws.send("/pub/comm/message", {}, JSON.stringify({messageType:'ENTER', roomId:vm.$data.roomId, sender:vm.$data.sender}));
+
+    }, function(error) {
+        alert("error "+error);
+    },
+
+    );
+    window.addEventListener("beforeunload",(event)=>{
+        ws.subscribe("/sub/comm/room/"+vm.$data.roomId, function(message) {
+            var recv = JSON.parse(message.body);
+            vm.disconnectMessage(recv);
+        });
+        ws.send("/pub/comm/message",{},JSON.stringify({messageType:'OUT', roomId:vm.$data.roomId, sender:'[알림]'}));
+        var param = new URLSearchParams();
+        var realroomId = localStorage.getItem('wschat.realroomId');
+        param.append("roomId", realroomId)
+        console.log(realroomId);
+        axios.post('/comm/roomdelete',param)
+    });
+</script>
+</body>
+</html>
